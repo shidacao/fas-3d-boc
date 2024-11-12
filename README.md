@@ -1,6 +1,6 @@
 # Introcudtion to FAS-3D-BOC simulation
 
-The FAS-3D-BOC simulation is a part of the paper manuscirpt 
+The FAS-3D-BOC simulation is a part of the paper 
 
 > "Three-dimensional bearing-only circumnavigation based on fully actuated system approach".
 
