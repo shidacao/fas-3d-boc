@@ -68,7 +68,10 @@
 #include <uORB/topics/vehicle_command.h>
 #include <cstdio>
 #include <matrix/math.hpp>
-#include <iostream>
+#include <fstream>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <iomanip>
 
 namespace fas_3d_boc{
 
@@ -79,28 +82,30 @@ const float DEG2RADf = M_PIf / 180.0f;
 
 using namespace time_literals;
 
-////////// configuration ///////////////////
-const float period = 0.05f;               //
-const hrt_abstime period_abstime = 50_ms; //
-const float hold_height = 4.0f;           //
-const hrt_abstime hold_duration = 5_s;    //
-                                          //
-struct CircumParam                        //
-{                                         //
-	const matrix::Vector3f x{3,0,-6}; //
-	const matrix::Vector3f n{0,0,1};  //
-	const float arho0 = 1;            //
-	const float arho1 = 1;            //
-	const float av2 = 1;              //
-	const float al0 = 1;              //
-	const float al1 = 1;              //
-	const float d = 3;                //
-	const float alpha = 2;            //
-}circum_param;                            //
-////////////////////////////////////////////
+////////// configuration /////////////////////////////////
+const float period = 0.1f;                            	//
+const hrt_abstime period_abstime = 100_ms;            	//
+const float hold_height = 4.0f;                       	//
+const hrt_abstime hold_duration = 1_s;                	//
+std::string figure_dir_name{"fas-3d-boc-figure"};     	//
+                                        	      	//
+struct CircumParam                                    	//
+{                                                     	//
+	const matrix::Vector3f x{3,0,-6};             	//
+	const matrix::Vector3f n{0,0,1};              	//
+	const float arho0 = 1;                        	//
+	const float arho1 = 1;                        	//
+	const float av2 = 1;                          	//
+	const float al0 = 1;                          	//
+	const float al1 = 1;                          	//
+	const float d = 3;                            	//
+	const float alpha = 2;                        	//
+}circum_param;                                        	//
+//////////////////////////////////////////////////////////
 
 struct CircumState
 {
+	float time;
 	float rho;
 	float rhohat;
 	matrix::Vector3f tau1;
@@ -124,23 +129,21 @@ struct DroneState
 }drone_state;
 
 // declarations
-float getRhohat(matrix::Vector3f y_now, matrix::Vector3f tau1_now,
-		matrix::Vector3f tau23_now, float v1_now);
-matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vector3f &ydot,
-				  const CircumParam & param, CircumState &record);
+float getRhohat(matrix::Vector3f y_now, matrix::Vector3f tau1_now, matrix::Vector3f tau23_now, float v1_now);
+matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vector3f &ydot, const CircumParam & param, CircumState &record);
 int fas_3d_boc_run(int argc, char **argv);
 void print(const DroneState &state);
 void print(const CircumState &state);
-void recordToFiles(float);
-void recordToFile(float);
+void recordToFiles();
+void recordScalarToFile(float time, float variable, std::string filename);
+void recordVectorToFile(float time, matrix::Vector3f variable, std::string filename);
 
 // main function
 extern "C" __EXPORT int fas_3d_boc_main(int argc, char *argv[])
 {
 	PX4_INFO("fas_3d_boc is started.");
 
-	px4_task_spawn_cmd("fas_3d_boc", SCHED_DEFAULT, SCHED_PRIORITY_DEFAULT,
-			   1024, fas_3d_boc_run, nullptr);
+	px4_task_spawn_cmd("fas_3d_boc", SCHED_DEFAULT, SCHED_PRIORITY_DEFAULT, 1024, fas_3d_boc_run, nullptr);
 
 	return 0;
 }
@@ -178,7 +181,10 @@ int fas_3d_boc_run(int argc, char **argv)
 		bool is_armed = veh_status_msg.arming_state == vehicle_status_s::ARMING_STATE_ARMED ? true : false;
 		bool has_changed_to_offboard = veh_status_msg.nav_state == vehicle_status_s::NAVIGATION_STATE_OFFBOARD ? true : false;
 		if (is_armed && has_changed_to_offboard)
+		{
+			PX4_INFO("armed and switched to offboard mode");
 			break;
+		}
 
 		// publish trajectory setpoint
 		traj_sp_msg.timestamp = hrt_absolute_time();
@@ -210,8 +216,6 @@ int fas_3d_boc_run(int argc, char **argv)
 		veh_command_msg.param2 = PX4_CUSTOM_MAIN_MODE_OFFBOARD;
 		veh_command_pub.publish(veh_command_msg);
 	}
-
-	PX4_INFO("armed and switched to offboard mode");
 
 	typedef enum _TaskState{BEGIN, TAKEOFF, HOLD, CIRCUM} TaskState;
 	TaskState task_state = TaskState::BEGIN;
@@ -336,9 +340,13 @@ int fas_3d_boc_run(int argc, char **argv)
 }
 
 // controller
-matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vector3f &ydot,
-				  const CircumParam &param, CircumState &record)
+matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vector3f &ydot, const CircumParam &param, CircumState &record)
 {
+	static u_int num = 0;
+
+	static const hrt_abstime circum_start_time_abstime = hrt_absolute_time();
+	float circum_time = num == 0 ? 0.0f : (hrt_absolute_time() - circum_start_time_abstime) * 1e-6f;
+
 	const matrix::Vector3f x = param.x;
 	const matrix::Vector3f n = param.n;
 	const float arho0 = param.arho0;
@@ -411,6 +419,7 @@ matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vecto
 	l_last = l;
 
 	// record
+	record.time = circum_time;
 	record.rho = rho;
 	record.rhohat = rhohat;
 	record.tau1 = tau1;
@@ -424,14 +433,24 @@ matrix::Vector3f getAccThenRecord(const matrix::Vector3f &y, const matrix::Vecto
 	record.theta = theta;
 	record.l = l;
 
-	recordToFiles(l);
+	// record to file
+	recordScalarToFile(circum_time, rho, "rho.txt");
+	recordScalarToFile(circum_time, rhohat, "rhohat.txt");
+	float rhotilde = rho - rhohat;
+	recordScalarToFile(circum_time, rhotilde, "rhotilde.txt");
+	float erho = rho - d;
+	recordScalarToFile(circum_time, erho, "erho.txt");
+	recordScalarToFile(circum_time, ev2, "ev2.txt");
+	recordScalarToFile(circum_time, l, "l.txt");
+	recordVectorToFile(circum_time, y, "y.txt");
+
+	num++;
 
 	return yddot;
 }
 
 // estimator
-float getRhohat(matrix::Vector3f y_now, matrix::Vector3f tau1_now,
-		matrix::Vector3f tau23_now, float v1_now)
+float getRhohat(matrix::Vector3f y_now, matrix::Vector3f tau1_now, matrix::Vector3f tau23_now, float v1_now)
 {
 	static u_int num = 0;
 
@@ -503,6 +522,7 @@ void print(const DroneState &state)
 void print(const CircumState &state)
 {
 	PX4_INFO("here is circumnavigation state");
+	printf("\ttime:   %10.6f (s)\n", static_cast<double>(state.time));
 	printf("\trho:    %7.3f (m)\n", static_cast<double>(state.rho));
 	printf("\trhohat: %7.3f (m)\n", static_cast<double>(state.rhohat));
 	printf("\ttau1:   %7.3f, %7.3f, %7.3f (m)\n",
@@ -526,14 +546,27 @@ void print(const CircumState &state)
 	printf("\tl:      %7.3f (m)\n", static_cast<double>(state.l));
 }
 
-void recordToFiles(float a)
+void recordScalarToFile(float time, float variable, std::string filename)
 {
-
+	mkdir(figure_dir_name.c_str(), 0777);
+	filename = figure_dir_name + "/" + filename;
+	std::ofstream file;
+	file.open(filename, time < 0.000001f ? std::ios::ate : std::ios::app);
+	file << std::left << std::setw(20) << time
+	     << std::left << std::setw(20) << variable << std::endl;
+	file.close();
 }
 
-void recordToFile(float a)
+void recordVectorToFile(float time, matrix::Vector3f variable, std::string filename)
 {
-
+	mkdir(figure_dir_name.c_str(), 0777);
+	filename = figure_dir_name + "/" + filename;
+	std::ofstream file;
+	file.open(filename, time < 0.000001f ? std::ios::ate : std::ios::app);
+	file << std::left << std::setw(20) << variable(0)
+	     << std::left << std::setw(20) << variable(1)
+	     << std::left << std::setw(20) << variable(2) << std::endl;
+	file.close();
 }
 
 } // namespace fas_3d_boc
