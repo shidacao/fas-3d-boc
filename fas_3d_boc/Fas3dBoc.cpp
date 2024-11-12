@@ -32,7 +32,7 @@
  ****************************************************************************/
 
 /**
- * @file fas_3d_boc.cpp
+ * @file Fas3dBoc.cpp
  *
  * Fully-actuated-system-based three-dimentional bearing-only circumnavigation task
  *
