@@ -82,26 +82,26 @@ const float DEG2RADf = M_PIf / 180.0f;
 
 using namespace time_literals;
 
-////////// configuration /////////////////////////////////
-const float period = 0.1f;                            	//
-const hrt_abstime period_abstime = 100_ms;            	//
-const float hold_height = 4.0f;                       	//
-const hrt_abstime hold_duration = 1_s;                	//
-std::string figure_dir_name{"FAS-3D-BOC-figure"};     	//
-                                        	      	//
-struct CircumParam                                    	//
-{                                                     	//
-	const matrix::Vector3f x{3,0,-6};             	//
-	const matrix::Vector3f n{0,0,1};              	//
-	const float arho0 = 1;                        	//
-	const float arho1 = 1;                        	//
-	const float av2 = 1;                          	//
-	const float al0 = 1;                          	//
-	const float al1 = 1;                          	//
-	const float d = 3;                            	//
-	const float alpha = 2;                        	//
-}circum_param;                                        	//
-//////////////////////////////////////////////////////////
+////////// configuration /////////////////////////////////////////
+const float period = 0.1f;                            		//
+const hrt_abstime period_abstime = 100_ms;            		//
+const float hold_height = 4.0f;                       		//
+const hrt_abstime hold_duration = 1_s;                		//
+const std::string figure_dir_name{"FAS-3D-BOC-figure"};     	//
+                                        	      		//
+struct CircumParam                                    		//
+{                                                     		//
+	const matrix::Vector3f x{3,0,-6};             		//
+	const matrix::Vector3f n{0,0,1};              		//
+	const float arho0 = 1;                        		//
+	const float arho1 = 1;                        		//
+	const float av2 = 1;                          		//
+	const float al0 = 1;                          		//
+	const float al1 = 1;                          		//
+	const float d = 3;                            		//
+	const float alpha = 2;                        		//
+}circum_param;                                        		//
+//////////////////////////////////////////////////////////////////
 
 struct CircumState
 {
