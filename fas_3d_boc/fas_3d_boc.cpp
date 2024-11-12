@@ -87,7 +87,7 @@ const float period = 0.1f;                            	//
 const hrt_abstime period_abstime = 100_ms;            	//
 const float hold_height = 4.0f;                       	//
 const hrt_abstime hold_duration = 1_s;                	//
-std::string figure_dir_name{"fas-3d-boc-figure"};     	//
+std::string figure_dir_name{"FAS-3D-BOC-figure"};     	//
                                         	      	//
 struct CircumParam                                    	//
 {                                                     	//
