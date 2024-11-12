@@ -3,6 +3,6 @@ px4_add_module(
 	MAIN fas_3d_boc
 	COMPILE_FLAGS
 	SRCS
-		fas_3d_boc.cpp
+		Fas3dBoc.cpp
 	DEPENDS
 	)
