@@ -20,7 +20,7 @@ The authors use Ubuntu 22.04. For PX4 compilation, platforms Ubuntu 18.04/20.04/
 
 We give a very brief introduction to the PX4 installation process in Ubuntu 22.04. For other platforms, the details are different but overall they are similar.
 
-1. Download PX4 source code from GitHub. By default, the master branch is cloned to your computer.
+1. Download PX4 source code from GitHub. By default, the master branch is cloned to your computer. Until the authors finish their paper, the master branch of PX4 is v1.15.
 
 	```bash
 	git clone https://github.com/PX4/PX4-Autopilot.git --recursive
