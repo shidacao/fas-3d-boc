@@ -1,0 +1,100 @@
+% TeX-master: "F3.tex"
+
+% x, y and xhat, 3D trajectory
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\linewidth,
+axis equal image,
+xmin=-12,xmax=22,ymin=-10,ymax=13,
+xlabel={$x$-axis/m},every axis y label/.style={at={(ticklabel cs:0.5)},rotate=90,},
+ylabel={$y$-axis/m},every axis x label/.style={at={(ticklabel cs:0.5,3pt)},},
+xmajorgrids,ymajorgrids,
+legend pos=south east,]
+\addplot [color=red,mark=+] table[row sep=crcr] {0 0\\}; \addlegendentry{$\x$}
+\addplot [color=green] table {fig/matlab/xhat.txt}; \addlegendentry{$\xhat$}
+\addplot [color=blue] table {fig/matlab/y.txt}; \addlegendentry{$\y$}
+\end{axis}\end{tikzpicture}
+\caption{3D trajectories of $\y$ and $\xhat$.}\label{simfig:trajectory}
+\end{figure}
+
+% x, y and xhat, planar trajectory
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\linewidth,
+axis equal image,
+xmin=-12,xmax=22,ymin=-10,ymax=13,
+xlabel={$x$-axis/m},every axis y label/.style={at={(ticklabel cs:0.5)},rotate=90,},
+ylabel={$y$-axis/m},every axis x label/.style={at={(ticklabel cs:0.5,3pt)},},
+xmajorgrids,ymajorgrids,
+legend pos=south east,]
+\addplot [color=red,mark=+] table[row sep=crcr] {0 0\\}; \addlegendentry{$\x$}
+\addplot [color=green] table {fig/matlab/xhat.txt}; \addlegendentry{$\xhat$}
+\addplot [color=blue] table {fig/matlab/y.txt}; \addlegendentry{$\y$}
+\end{axis}\end{tikzpicture}
+\caption{Planar trajectories of $\y$ and $\xhat$.}\label{simfig:planar trajectory}
+\end{figure}
+
+% macro definitions
+\def\signalfigurewidthscale{0.95}
+\def\signalfigureheightscale{0.4}
+\def\signalfigurexylabelset{
+	every axis y label/.style={at={(-0.16,0.5)},rotate=90,},
+	every axis x label/.style={at={(0.5,-0.5)},},}
+
+% |xtilde|
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\signalfigurewidthscale\linewidth,
+height=\signalfigureheightscale\linewidth,
+xmin=0,xmax=60,ymin=-10,ymax=5,\signalfigurexylabelset
+xlabel={time/s},ylabel={$\rhotilde$\,/m},
+xmajorgrids,ymajorgrids]
+\addplot [color=blue] table {fig/matlab/eomega.txt};
+\end{axis}\end{tikzpicture}
+\caption{$\rhotilde$.}\label{simfig:rhotilde}
+\end{figure}
+
+% erho
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\signalfigurewidthscale\linewidth,
+height=\signalfigureheightscale\linewidth,
+xmin=0,xmax=60,ymin=-2,ymax=18,\signalfigurexylabelset
+xlabel={time/s},ylabel={$\erho$\,/m},
+xmajorgrids,ymajorgrids]
+\addplot [color=blue] table {fig/matlab/eomega.txt};
+\end{axis}\end{tikzpicture}
+\caption{$\erho$.}\label{simfig:erho}
+\end{figure}
+
+% ev2
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\signalfigurewidthscale\linewidth,
+height=\signalfigureheightscale\linewidth,
+xmin=0,xmax=60,ymin=-0.3,ymax=0.1,\signalfigurexylabelset
+xlabel={time/s},ylabel={$\evII$\,/m},
+xmajorgrids,ymajorgrids]
+\addplot [color=blue] table {fig/matlab/eomega.txt};
+\end{axis}\end{tikzpicture}
+\caption{$\evII$.}\label{simfig:ev2}
+\end{figure}
+
+% l
+\begin{figure}[!htbp]
+\centering
+\begin{tikzpicture}\begin{axis}[
+width=\signalfigurewidthscale\linewidth,
+height=\signalfigureheightscale\linewidth,
+xmin=0,xmax=60,ymin=-0.3,ymax=0.1,\signalfigurexylabelset
+xlabel={time/s},ylabel={$l$\,/m},
+xmajorgrids,ymajorgrids]
+\addplot [color=blue] table {fig/matlab/eomega.txt};
+\end{axis}\end{tikzpicture}
+\caption{$l$.}\label{simfig:l}
+\end{figure}
