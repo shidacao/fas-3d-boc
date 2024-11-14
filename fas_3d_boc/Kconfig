@@ -1,5 +1,0 @@
-menuconfig EXAMPLES_FAS_3D_BOC
-	bool "fas_3d_boc"
-	default n
-	---help---
-		Enable support for fas_3d_boc
