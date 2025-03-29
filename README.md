@@ -62,7 +62,7 @@ This means that, if it is applied to a real quadrotor, our program runs on the f
 The authors think that the above three method are all suitable for the simulation of this paper.
 We just choose one way but the other two ways are also good.
 
-Our program is a module of PX4 so the "fas-3d-boc" folder of ours should be moved to the "src/examples" path of the PX4 folder.
+Our program is a module of PX4 so the "simulation/fas_3d_boc" folder of ours should be moved to the "src/examples" path of the PX4 folder.
 In the terminal in the PX4 folder's path, run
 
 ```bash
@@ -73,11 +73,15 @@ Then our module is together compiled with the PX4 firmware and the jMavSim simul
 After the GPS-ready message (in green font), in the PX4's zsh shell, start our program through running
 
 ```zsh
-fas-3d-boc
+fas_3d_boc
 ```
 
 Then the quadrotor takes off, hovers in 3 meters height for 5 seconds and then performs the circumnavigation task.
-The circumnavigation parameters are written in the source file "fas-3d-boc/"
+
+The circumnavigation parameters are written in the source file "simulation/fas_3d_boc/Fas3dBoc.cpp".
+The video "simulation/fas-3d-boc_sim.mp4" shows the circumnavigation result.
+
+
 
 
 
