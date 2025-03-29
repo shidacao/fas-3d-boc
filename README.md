@@ -51,6 +51,35 @@ This is a very rough introduction and only the skelton of the installing process
 
 ### Add fas-3d-boc module to PX4 as an application
 
+Generally speaking, there are three methods to use the PX4 autopolit:
+
+1. as a module of PX4;
+2. with ROS: MAVROS for ROS 1 and uXRCE-DDS for ROS 2; and
+3. MAVSDK.
+
+In this simulation, we adopt the first method so our program is of the flight control level.
+This means that, if it is applied to a real quadrotor, our program runs on the flight control boards such as Pixhawk and does not run on onboard computers such as Raspberry Pi.
+The authors think that the above three method are all suitable for the simulation of this paper.
+We just choose one way but the other two ways are also good.
+
+Our program is a module of PX4 so the "fas-3d-boc" folder of ours should be moved to the "src/examples" path of the PX4 folder.
+In the terminal in the PX4 folder's path, run
+
+```bash
+make px4_sitl jmavsim
+```
+
+Then our module is together compiled with the PX4 firmware and the jMavSim simulator is opened after compilation.
+After the GPS-ready message (in green font), in the PX4's zsh shell, start our program through running
+
+```zsh
+fas-3d-boc
+```
+
+Then the quadrotor takes off, hovers in 3 meters height for 5 seconds and then performs the circumnavigation task.
+The circumnavigation parameters are written in the source file "fas-3d-boc/"
+
+
 
 
 
