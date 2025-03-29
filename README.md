@@ -1,5 +1,14 @@
 # The fas3dboc paper
 
+---
+<i>Written for reviewers: 
+
+1. "simulation/fas-3d-boc_sim.mp4" shows the simulation result of this paper.
+2. "simulation/fas_3d_boc" folder contains the source files of this simulation.
+</i>
+
+---
+
 This is the repository of the following fas3dboc paper.  
 
 > "Three-dimensional bearing-only circumnavigation based on fully actuated system approach, submitted to *ISA Transactions*".
