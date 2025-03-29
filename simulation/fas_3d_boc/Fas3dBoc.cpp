@@ -41,10 +41,10 @@
  *
  * This is a process-oriented style program
  *
- * @author Shida Cao (曹世达) <shida_cao@163.com>
- * The author of this program is from Center for Control and Guidance Technology,
- * School of Astronautics, Harbin Institute of Technology
- * (哈尔滨工业大学航天学院控制理论与制导技术研究中心)
+ * 
+ * 
+ * 
+ * 
  */
 
 /**
